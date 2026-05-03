@@ -1,49 +1,28 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { clearAuthTokens } from "../../services/api/auth";
-import { getMe, type UserProfile } from "../../services/api/user";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { clearUser } from "@/store/userSlice";
 
 export function MePage() {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const dispatch = useAppDispatch();
+  const { data: profile } = useAppSelector((state) => state.user);
 
   useEffect(() => {
     const handleUnauthorized = () => {
       clearAuthTokens();
+      dispatch(clearUser());
       navigate("/login");
     };
 
     window.addEventListener("auth:unauthorized", handleUnauthorized);
     return () => window.removeEventListener("auth:unauthorized", handleUnauthorized);
-  }, [navigate]);
-
-  useEffect(() => {
-    let isMounted = true;
-    const loadProfile = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const data = await getMe();
-        if (isMounted) setProfile(data);
-      } catch (err) {
-        if (isMounted) {
-          setError(err instanceof Error ? err.message : "Failed to load profile");
-        }
-      } finally {
-        if (isMounted) setIsLoading(false);
-      }
-    };
-
-    loadProfile();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  }, [dispatch, navigate]);
 
   const handleLogout = () => {
     clearAuthTokens();
+    dispatch(clearUser());
     navigate("/login");
   };
 
@@ -65,11 +44,7 @@ export function MePage() {
           </button>
         </div>
 
-        {isLoading ? (
-          <div className="rounded-md border p-4">Loading...</div>
-        ) : error ? (
-          <div className="rounded-md border p-4 text-destructive">{error}</div>
-        ) : profile ? (
+        {profile ? (
           <div className="rounded-md border bg-card p-4 space-y-3">
             <div>
               <div className="text-xs text-muted-foreground">ID</div>
@@ -92,7 +67,9 @@ export function MePage() {
               <div className="text-sm">{profile.created_at}</div>
             </div>
           </div>
-        ) : null}
+        ) : (
+          <div className="rounded-md border p-4">Loading...</div>
+        )}
 
         <Link to="/" className="text-primary underline text-sm">
           Back to home
