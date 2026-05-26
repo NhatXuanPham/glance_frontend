@@ -17,7 +17,7 @@ export function Home() {
 
   useEffect(() => {
     if (!initialized) return;
-    navigate(data ? "/me" : "/login", { replace: true });
+    navigate(data?.username ? `/${data.username}` : "/login", { replace: true });
   }, [data, initialized, navigate]);
 
   return (

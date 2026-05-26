@@ -26,7 +26,8 @@ export function GoogleCallbackPage() {
           refreshToken: data.refresh_token,
         });
         await dispatch(fetchCurrentUser());
-        navigate("/me");
+        const user = await dispatch(fetchCurrentUser()).unwrap();
+        navigate(`/${user.username}`);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Google login failed");
       }

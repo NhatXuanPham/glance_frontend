@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router";
+import { Shell } from "./components/shared/Shell";
 import { GoogleCallbackPage } from "./pages/google-callback";
 import { Home } from "./pages/home";
 import { LoginPage } from "./pages/login";
@@ -11,35 +12,38 @@ import {
   rootRedirectLoader,
 } from "@/middleware/auth";
 
-export const router = createBrowserRouter(
-  [
-    {
-      path: "/",
-      Component: Home,
-      loader: rootRedirectLoader,
-    },
-    {
-      path: "/login",
-      Component: LoginPage,
-      loader: requireGuestLoader,
-    },
-    {
-      path: "/oauth/google/callback",
-      Component: GoogleCallbackPage,
-    },
-    {
-      path: "/register",
-      Component: RegisterPage,
-      loader: requireGuestLoader,
-    },
-    {
-      path: "/me",
-      Component: MePage,
-      loader: requireAuthLoader,
-    },
-    {
-      path: "*",
-      Component: NotFoundPage,
-    },
-  ],
-);
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    Component: Home,
+    loader: rootRedirectLoader,
+  },
+  {
+    path: "/login",
+    Component: LoginPage,
+    loader: requireGuestLoader,
+  },
+  {
+    path: "/oauth/google/callback",
+    Component: GoogleCallbackPage,
+  },
+  {
+    path: "/register",
+    Component: RegisterPage,
+    loader: requireGuestLoader,
+  },
+  {
+    Component: Shell,
+    children: [
+      {
+        path: "/:username",
+        Component: MePage,
+        loader: requireAuthLoader,
+      },
+    ],
+  },
+  {
+    path: "*",
+    Component: NotFoundPage,
+  },
+]);

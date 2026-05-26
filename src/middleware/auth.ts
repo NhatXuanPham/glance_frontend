@@ -41,7 +41,8 @@ export async function requireGuestLoader() {
 
   const currentUser = await resolveCurrentUser();
   if (currentUser) {
-    throw redirect("/me");
+    const username = currentUser.username;
+    throw redirect(username ? `/${username}` : "/login");
   }
 
   return null;
@@ -53,5 +54,6 @@ export async function rootRedirectLoader() {
   }
 
   const currentUser = await resolveCurrentUser();
-  throw redirect(currentUser ? "/me" : "/login");
+  const username = currentUser?.username;
+  throw redirect(username ? `/${username}` : "/login");
 }

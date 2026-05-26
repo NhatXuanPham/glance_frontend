@@ -1,14 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "@/libs/configApi";
-
-export interface CurrentUser {
-  id?: string | number;
-  display_name?: string;
-  username?: string;
-  email?: string;
-  created_at?: string;
-}
-
+import { UserProfile as CurrentUser } from "@/services/api/user";
 interface UserState {
   data: CurrentUser | null;
   loading: boolean;

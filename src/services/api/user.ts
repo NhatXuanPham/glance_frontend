@@ -6,6 +6,10 @@ export type UserProfile = {
   username: string;
   email: string;
   created_at: string;
+  avatar_url: string | null;
+  total_posts: number;
+  total_followers: number;
+  total_following: number;
 };
 
 export async function getMe(): Promise<UserProfile> {
